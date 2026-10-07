@@ -1,0 +1,2 @@
+       <ShowcaseLayout card={card} sections={ordered} />
+        <CardFooter card={card} demo={demo}

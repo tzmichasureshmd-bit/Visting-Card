@@ -1,0 +1,700 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  user
+  reseller
+  admin
+}
+
+enum UserStatus {
+  active
+  suspended
+  deleted
+}
+
+enum CardType {
+  personal
+  professional
+  business
+  creator
+  company
+}
+
+enum CardStatus {
+  draft
+  published
+  suspended
+}
+
+enum LeadStatus {
+  new
+  contacted
+  interested
+  converted
+  lost
+}
+
+enum AppointmentStatus {
+  pending
+  accepted
+  rejected
+  completed
+}
+
+enum PlanSlug {
+  free
+  starter
+  professional
+  business
+  enterprise
+}
+
+enum BillingPeriod {
+  monthly
+  annual
+  one_time
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  expired
+  grace
+  pending
+}
+
+enum PaymentStatus {
+  created
+  authorized
+  captured
+  failed
+  refunded
+}
+
+enum DiscountType {
+  percent
+  fixed
+}
+
+enum ReferralStatus {
+  pending
+  qualified
+  approved
+  paid
+  rejected
+}
+
+enum PayoutStatus {
+  requested
+  under_review
+  approved
+  paid
+  rejected
+}
+
+// ── Models ───────────────────────────────────────────────────────────────────
+
+model Profile {
+  id              String     @id @db.Uuid
+  email           String     @unique
+  passwordHash    String?    @map("password_hash")
+  fullName        String?    @map("full_name")
+  phone           String?
+  avatarUrl       String?    @map("avatar_url")
+  role            UserRole   @default(user)
+  status          UserStatus @default(active)
+  referralCode    String?    @unique @map("referral_code")
+  referredById    String?    @map("referred_by") @db.Uuid
+  onboarded       Boolean    @default(false)
+  onboardingStep  Int        @default(0) @map("onboarding_step")
+  notifyEmail     Boolean    @default(true) @map("notify_email")
+  notifyWhatsapp  Boolean    @default(false) @map("notify_whatsapp")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  referredBy        Profile?          @relation("Referrals", fields: [referredById], references: [id])
+  referredUsers     Profile[]         @relation("Referrals")
+  cards             Card[]
+  subscriptions     Subscription[]
+  payments          Payment[]
+  referralsGiven    Referral[]        @relation("ReferrerReferrals")
+  referralReceived  Referral?         @relation("ReferredUserReferral")
+  referralRewards   ReferralReward[]
+  referralWallet    ReferralWallet?
+  payoutRequests    PayoutRequest[]
+  notifications     Notification[]
+  leadNotes         LeadNote[]        @relation("LeadNotes")
+
+  @@map("profiles")
+}
+
+model Theme {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug        String   @unique
+  name        String
+  category    String   @default("general")
+  description String?
+  config      Json     @default("{}")
+  isPremium   Boolean  @default(false) @map("is_premium")
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  cards Card[]
+
+  @@map("themes")
+}
+
+model Card {
+  id                   String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId               String     @map("user_id") @db.Uuid
+  type                 CardType   @default(personal)
+  username             String
+  fullName             String     @map("full_name")
+  designation          String?
+  company              String?
+  bio                  String?
+  photoUrl             String?    @map("photo_url")
+  coverUrl             String?    @map("cover_url")
+  logoUrl              String?    @map("logo_url")
+  phone                String?
+  whatsapp             String?
+  email                String?
+  website              String?
+  address              String?
+  city                 String?
+  state                String?
+  country              String?    @default("India")
+  pincode              String?
+  latitude             Float?
+  longitude            Float?
+  themeId              String?    @map("theme_id") @db.Uuid
+  themeOverrides       Json       @default("{}") @map("theme_overrides")
+  showBusinessHours    Boolean    @default(true) @map("show_business_hours")
+  openToEnquiries      Boolean    @default(true) @map("open_to_enquiries")
+  openToAppointments   Boolean    @default(false) @map("open_to_appointments")
+  status               CardStatus @default(draft)
+  publishedAt          DateTime?  @map("published_at")
+  suspendedAt          DateTime?  @map("suspended_at")
+  suspendReason        String?    @map("suspend_reason")
+  deletedAt            DateTime?  @map("deleted_at")
+  viewCount            Int        @default(0) @map("view_count")
+  qrScanCount          Int        @default(0) @map("qr_scan_count")
+  leadCount            Int        @default(0) @map("lead_count")
+  createdAt            DateTime   @default(now()) @map("created_at")
+  updatedAt            DateTime   @updatedAt @map("updated_at")
+
+  user             Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme            Theme?           @relation(fields: [themeId], references: [id])
+  sections         CardSection[]
+  socialLinks      SocialLink[]
+  businessHours    BusinessHour[]
+  paymentConfig    PaymentConfig?
+  services         Service[]
+  products         Product[]
+  catalogues       Catalogue[]
+  portfolioItems   PortfolioItem[]
+  galleryItems     GalleryItem[]
+  videos           Video[]
+  reviews          Review[]
+  testimonials     Testimonial[]
+  offers           Offer[]
+  leads            Lead[]
+  appointments     Appointment[]
+  analyticsEvents  AnalyticsEvent[]
+
+  @@map("cards")
+}
+
+model CardSection {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId     String   @map("card_id") @db.Uuid
+  sectionKey String   @map("section_key")
+  position   Int      @default(0)
+  isEnabled  Boolean  @default(true) @map("is_enabled")
+  config     Json     @default("{}")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, sectionKey])
+  @@map("card_sections")
+}
+
+model SocialLink {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId    String   @map("card_id") @db.Uuid
+  platform  String   @default("custom")
+  url       String
+  label     String?
+  position  Int      @default(0)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("social_links")
+}
+
+model BusinessHour {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId     String   @map("card_id") @db.Uuid
+  dayOfWeek  Int      @map("day_of_week")
+  isOpen     Boolean  @default(false) @map("is_open")
+  opensAt    Int?     @map("opens_at")
+  closesAt   Int?     @map("closes_at")
+  is24h      Boolean  @default(false) @map("is_24h")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, dayOfWeek])
+  @@map("business_hours")
+}
+
+model PaymentConfig {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId    String   @unique @map("card_id") @db.Uuid
+  upiId     String?  @map("upi_id")
+  payeeName String?  @map("payee_name")
+  note      String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("payment_configs")
+}
+
+model Service {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String   @map("card_id") @db.Uuid
+  name        String
+  description String?
+  imageUrl    String?  @map("image_url")
+  pricePaise  Int?     @map("price_paise")
+  ctaType     String   @default("enquiry") @map("cta_type")
+  ctaLabel    String?  @map("cta_label")
+  ctaValue    String?  @map("cta_value")
+  position    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("services")
+}
+
+model Product {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId        String   @map("card_id") @db.Uuid
+  name          String
+  description   String?
+  imageUrl      String?  @map("image_url")
+  originalPrice Int?     @map("original_price")
+  salePrice     Int?     @map("sale_price")
+  ctaType       String   @default("whatsapp") @map("cta_type")
+  ctaLabel      String?  @map("cta_label")
+  ctaValue      String?  @map("cta_value")
+  position      Int      @default(0)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
+
+model Catalogue {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String           @map("card_id") @db.Uuid
+  title       String
+  category    String           @default("products")
+  description String?
+  coverUrl    String?          @map("cover_url")
+  position    Int              @default(0)
+  isActive    Boolean          @default(true) @map("is_active")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  card  Card             @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  items CatalogueItem[]
+
+  @@map("catalogues")
+}
+
+model CatalogueItem {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  catalogueId  String    @map("catalogue_id") @db.Uuid
+  cardId       String    @map("card_id") @db.Uuid
+  name         String
+  description  String?
+  imageUrl     String?   @map("image_url")
+  pricePaise   Int?      @map("price_paise")
+  offerPaise   Int?      @map("offer_paise")
+  ctaType      String    @default("enquiry") @map("cta_type")
+  ctaLabel     String?   @map("cta_label")
+  position     Int       @default(0)
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  catalogue Catalogue @relation(fields: [catalogueId], references: [id], onDelete: Cascade)
+
+  @@map("catalogue_items")
+}
+
+model PortfolioItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String   @map("card_id") @db.Uuid
+  title       String
+  description String?
+  imageUrl    String?  @map("image_url")
+  videoUrl    String?  @map("video_url")
+  externalUrl String?  @map("external_url")
+  category    String?
+  position    Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_items")
+}
+
+model GalleryItem {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId    String   @map("card_id") @db.Uuid
+  imageUrl  String   @map("image_url")
+  caption   String?
+  width     Int?
+  height    Int?
+  blurHash  String?  @map("blur_hash")
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("gallery_items")
+}
+
+model Video {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId       String   @map("card_id") @db.Uuid
+  title        String
+  url          String
+  kind         String   @default("intro")
+  thumbnailUrl String?  @map("thumbnail_url")
+  position     Int      @default(0)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("videos")
+}
+
+model Review {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId       String   @map("card_id") @db.Uuid
+  authorName   String   @map("author_name")
+  authorAvatar String?  @map("author_avatar")
+  rating       Int
+  body         String?
+  isFeatured   Boolean  @default(false) @map("is_featured")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Testimonial {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId            String   @map("card_id") @db.Uuid
+  authorName        String   @map("author_name")
+  authorDesignation String?  @map("author_designation")
+  authorCompany     String?  @map("author_company")
+  authorAvatar      String?  @map("author_avatar")
+  body              String
+  isActive          Boolean  @default(true) @map("is_active")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("testimonials")
+}
+
+model Offer {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String    @map("card_id") @db.Uuid
+  title       String
+  description String?
+  badge       String?
+  expiresAt   DateTime? @map("expires_at")
+  position    Int       @default(0)
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("offers")
+}
+
+model Lead {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String     @map("card_id") @db.Uuid
+  name        String
+  phone       String
+  email       String?
+  message     String?
+  source      String     @default("enquiry")
+  status      LeadStatus @default(new)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  convertedAt DateTime?  @map("converted_at")
+
+  card  Card       @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  notes LeadNote[]
+
+  @@map("leads")
+}
+
+model LeadNote {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId      String   @map("lead_id") @db.Uuid
+  body        String
+  createdById String?  @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdBy Profile? @relation("LeadNotes", fields: [createdById], references: [id])
+
+  @@map("lead_notes")
+}
+
+model Appointment {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId        String            @map("card_id") @db.Uuid
+  name          String
+  phone         String
+  email         String?
+  service       String?
+  preferredDate DateTime?         @map("preferred_date") @db.Date
+  preferredTime String?           @map("preferred_time")
+  message       String?
+  status        AppointmentStatus @default(pending)
+  adminNote     String?           @map("admin_note")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("appointments")
+}
+
+model AnalyticsEvent {
+  id             BigInt   @id @default(autoincrement())
+  cardId         String   @map("card_id") @db.Uuid
+  eventType      String   @map("event_type")
+  visitorHash    String?  @map("visitor_hash")
+  deviceCategory String?  @map("device_category")
+  trafficSource  String?  @map("traffic_source")
+  referrer       String?
+  utmSource      String?  @map("utm_source")
+  utmCampaign    String?  @map("utm_campaign")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("analytics_events")
+}
+
+model Plan {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug          PlanSlug      @unique
+  name          String
+  tagline       String?
+  description   String?
+  pricePaise    Int           @default(0) @map("price_paise")
+  isCustom      Boolean       @default(false) @map("is_custom")
+  billingPeriod BillingPeriod @default(annual) @map("billing_period")
+  features      Json          @default("[]")
+  limits        Json          @default("{}")
+  sortOrder     Int           @default(0) @map("sort_order")
+  isActive      Boolean       @default(true) @map("is_active")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  subscriptions Subscription[]
+  payments      Payment[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                    String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String             @map("user_id") @db.Uuid
+  planId                String             @map("plan_id") @db.Uuid
+  status                SubscriptionStatus @default(pending)
+  startedAt             DateTime           @default(now()) @map("started_at")
+  currentPeriodEnd      DateTime?          @map("current_period_end")
+  graceUntil            DateTime?          @map("grace_until")
+  cancelledAt           DateTime?          @map("cancelled_at")
+  cancelReason          String?            @map("cancel_reason")
+  pricePaise            Int                @map("price_paise")
+  billingPeriod         BillingPeriod      @default(annual) @map("billing_period")
+  razorpaySubscriptionId String?           @map("razorpay_subscription_id")
+  createdAt             DateTime           @default(now()) @map("created_at")
+  updatedAt             DateTime           @updatedAt @map("updated_at")
+
+  user            Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            Plan             @relation(fields: [planId], references: [id])
+  payments        Payment[]
+  referralRewards ReferralReward[]
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  subscriptionId  String?       @map("subscription_id") @db.Uuid
+  planId          String?       @map("plan_id") @db.Uuid
+  orderId         String?       @unique @map("order_id")
+  transactionId   String?       @unique @map("transaction_id")
+  amountPaise     Int           @map("amount_paise")
+  discountPaise   Int           @default(0) @map("discount_paise")
+  taxPaise        Int           @default(0) @map("tax_paise")
+  currency        String        @default("INR")
+  status          PaymentStatus @default(created)
+  provider        String        @default("razorpay")
+  method          String?
+  providerPayload Json?         @map("provider_payload")
+  verifiedAt      DateTime?     @map("verified_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  user         Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  plan         Plan?         @relation(fields: [planId], references: [id])
+
+  @@map("payments")
+}
+
+model Referral {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  referrerId     String         @map("referrer_id") @db.Uuid
+  referredUserId String         @unique @map("referred_user_id") @db.Uuid
+  referralCode   String         @map("referral_code")
+  status         ReferralStatus @default(pending)
+  qualifiedBy    String?        @map("qualified_by")
+  qualifiedAt    DateTime?      @map("qualified_at")
+  isFlagged      Boolean        @default(false) @map("is_flagged")
+  flagReason     String?        @map("flag_reason")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  referrer     Profile          @relation("ReferrerReferrals", fields: [referrerId], references: [id], onDelete: Cascade)
+  referredUser Profile          @relation("ReferredUserReferral", fields: [referredUserId], references: [id], onDelete: Cascade)
+  rewards      ReferralReward[]
+
+  @@map("referrals")
+}
+
+model ReferralReward {
+  id                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  referralId        String         @map("referral_id") @db.Uuid
+  userId            String         @map("user_id") @db.Uuid
+  subscriptionId    String         @unique @map("subscription_id") @db.Uuid
+  paymentId         String?        @map("payment_id") @db.Uuid
+  commissionPercent Decimal        @map("commission_percent") @db.Decimal(5, 2)
+  baseAmountPaise   Int            @map("base_amount_paise")
+  commissionAmount  Int            @map("commission_amount")
+  currency          String         @default("INR")
+  status            ReferralStatus @default(pending)
+  approvedAt        DateTime?      @map("approved_at")
+  paidAt            DateTime?      @map("paid_at")
+  expiresAt         DateTime?      @map("expires_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  referral     Referral     @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  user         Profile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([referralId, subscriptionId])
+  @@map("referral_rewards")
+}
+
+model ReferralWallet {
+  userId         String   @id @map("user_id") @db.Uuid
+  availablePaise Int      @default(0) @map("available_paise")
+  pendingPaise   Int      @default(0) @map("pending_paise")
+  lifetimeEarned Int      @default(0) @map("lifetime_earned")
+  lifetimePaid   Int      @default(0) @map("lifetime_paid")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("referral_wallets")
+}
+
+model PayoutRequest {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String       @map("user_id") @db.Uuid
+  amountPaise     Int          @map("amount_paise")
+  method          String       @default("upi")
+  upiId           String?      @map("upi_id")
+  bankDetails     Json?        @map("bank_details")
+  status          PayoutStatus @default(requested)
+  adminNote       String?      @map("admin_note")
+  payoutReference String?      @map("payout_reference")
+  processedAt     DateTime?    @map("processed_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payout_requests")
+}
+
+model Notification {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String   @default("system")
+  title     String
+  body      String?
+  link      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
