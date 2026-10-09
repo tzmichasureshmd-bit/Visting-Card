@@ -29,7 +29,7 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
     async function animate() {
       try {
         const gsapModule = await import("gsap");
-        const gsap = gsapModule.gsap ?? gsapModule.default;
+        const gsap = (gsapModule as unknown as { gsap?: typeof import("gsap")["default"] }).gsap ?? gsapModule.default;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         const els = [eyebrowRef.current, line1Ref.current, line2Ref.current, line3Ref.current, subRef.current, ctaRef.current];
         gsap.set(els, { opacity: 0, y: 48 });

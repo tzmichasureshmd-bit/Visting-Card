@@ -30,7 +30,8 @@ function Bone({
   useEffect(() => {
     let kill: (() => void) | undefined;
     (async () => {
-      const { gsap } = await import("gsap");
+      const m = await import("gsap");
+      const gsap = m.gsap ?? m.default;
       const tween = gsap.fromTo(
         ref.current,
         { backgroundPosition: "-200% 0" },
@@ -61,7 +62,8 @@ function Shimmer({
   useEffect(() => {
     let kill: (() => void) | undefined;
     (async () => {
-      const { gsap } = await import("gsap");
+      const m = await import("gsap");
+      const gsap = m.gsap ?? m.default;
       const tween = gsap.fromTo(
         ref.current,
         { backgroundPosition: "-200% 0" },
@@ -136,7 +138,8 @@ function ProfileCard() {
   useEffect(() => {
     let kill: (() => void) | undefined;
     (async () => {
-      const { gsap } = await import("gsap");
+      const m = await import("gsap");
+      const gsap = m.gsap ?? m.default;
       const els = [nameRef.current, handleRef.current, bioRef.current, statsRef.current, btnRef.current];
       gsap.set(els, { opacity: 0, y: 16 });
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -194,7 +197,8 @@ function WipeOverlay({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     let kill: (() => void) | undefined;
     (async () => {
-      const { gsap } = await import("gsap");
+      const m = await import("gsap");
+      const gsap = m.gsap ?? m.default;
       const tl = gsap.timeline({ onComplete: onDone });
       tl.fromTo(ref.current,
         { clipPath: "inset(0 0 0 0%)" },
