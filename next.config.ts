@@ -25,7 +25,7 @@ const csp = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Supabase (auth + storage + realtime) and Razorpay checkout.
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com",
+  "connect-src 'self' https://card.tzmicha.com https://*.supabase.co wss://*.supabase.co https://api.razorpay.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com",
   "media-src 'self' blob: https:",
   "object-src 'none'",
