@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { AuthCard, AuthStatement } from "@/components/auth/auth-motion";
@@ -22,27 +23,15 @@ export function AuthShell({ variant, children, showTagline = true, isDark }: Aut
 
       {/* Top bar */}
       <header style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.625rem", textDecoration: "none" }}>
-          <span
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              width: "2.125rem", height: "2.125rem", borderRadius: "0.5rem",
-              background: "var(--dv-lime)", fontSize: "0.6875rem", fontWeight: 900,
-              color: "var(--dv-black)", border: "1.5px solid rgba(0,0,0,0.12)",
-            }}
-            aria-hidden
-          >
-            DV
-          </span>
-          <span
-            style={{
-              fontSize: "0.9375rem", fontWeight: 800, letterSpacing: "-0.04em",
-              textTransform: "uppercase",
-              color: split ? "var(--dv-black)" : "var(--dv-black)",
-            }}
-          >
-            DV CARD
-          </span>
+        <Link href="/" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
+          <Image
+            src="/images/dvcard/Glosssy logo.png"
+            alt="DV Card"
+            width={80}
+            height={28}
+            style={{ objectFit: "contain" }}
+            priority
+          />
         </Link>
         <Link
           href="/"

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -12,59 +13,18 @@ export function BrandMark({
   className?: string;
   compact?: boolean;
 }) {
-  const isDark = tone === "dark";
+  void tone;
 
   const content = (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.625rem" }}>
-      {/* Logo mark */}
-      <span
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "2.125rem",
-          height: "2.125rem",
-          borderRadius: "0.5rem",
-          background: "var(--dv-lime)",
-          fontSize: "0.6875rem",
-          fontWeight: 900,
-          color: "var(--dv-black)",
-          letterSpacing: "-0.02em",
-          flexShrink: 0,
-          border: "1.5px solid rgba(0,0,0,0.12)",
-        }}
-        aria-hidden
-      >
-        DV
-      </span>
-
-      {!compact ? (
-        <span style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-          <span
-            style={{
-              fontSize: "0.9375rem",
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              color: isDark ? "#fff" : "var(--dv-black)",
-              textTransform: "uppercase",
-            }}
-          >
-            DV CARD
-          </span>
-          <span
-            style={{
-              fontSize: "0.5625rem",
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: isDark ? "rgba(255,255,255,0.45)" : "var(--dv-gray-light)",
-              marginTop: "0.1875rem",
-            }}
-          >
-            Digital Visiting Card
-          </span>
-        </span>
-      ) : null}
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+      <Image
+        src="/images/dvcard/Glosssy logo.png"
+        alt="DV Card Logo"
+        width={compact ? 28 : 72}
+        height={compact ? 28 : 28}
+        style={{ objectFit: "contain", flexShrink: 0 }}
+        priority
+      />
     </span>
   );
 

@@ -15,6 +15,7 @@ const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").repl
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
+  icons: { icon: "/images/dvcard/Glosssy logo.png", apple: "/images/dvcard/Glosssy logo.png" },
   title: { default: "DV CARD — Digital Visiting Card", template: "%s | DV CARD" },
   description: "Create a beautiful digital visiting card. Share it as a link, QR code, or WhatsApp. Your identity, everywhere.",
   applicationName: "DV CARD",

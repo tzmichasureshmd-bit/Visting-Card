@@ -9,10 +9,19 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer style={{ background: "var(--dv-white)", borderTop: "1px solid var(--dv-border)" }}>
+    <footer style={{ background: "var(--dv-white)" }}>
 
-      {/* Large lime CTA band */}
-      <div style={{ background: "var(--dv-lime)", padding: "clamp(3rem, 6vw, 5rem) 0", overflow: "hidden", position: "relative" }}>
+      {/* Digital Banner — full bleed, TOP */}
+      <div style={{ lineHeight: 0, margin: 0, padding: 0 }}>
+        <img
+          src="/images/dvcard/Digital Banner .png"
+          alt="DV Card — Digital Visiting Card Platform"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
+      </div>
+
+      {/* Large lime CTA band — below banner */}
+      <div style={{ background: "var(--dv-lime)", padding: "clamp(3rem, 6vw, 5rem) 0", overflow: "hidden", position: "relative", marginBottom: 0 }}>
         {/* Grid overlay */}
         <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)", backgroundSize: "80px 80px", pointerEvents: "none" }} />
         <div className="dv-container" style={{ position: "relative" }}>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, QrCode, Share2, UserCheck, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import TypewriterText from "@/components/ui/typewriter-text";
@@ -20,7 +20,6 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
   const subRef     = useRef<HTMLDivElement>(null);
   const ctaRef     = useRef<HTMLDivElement>(null);
   const phoneRef   = useRef<HTMLDivElement>(null);
-  const pillsRef   = useRef<HTMLDivElement>(null);
   const canvasRef  = useRef<HTMLCanvasElement>(null);
 
   /* ── GSAP entrance ─────────────────────────────────────────── */
@@ -34,7 +33,6 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
         const els = [eyebrowRef.current, line1Ref.current, line2Ref.current, line3Ref.current, subRef.current, ctaRef.current];
         gsap.set(els, { opacity: 0, y: 48 });
         gsap.set(phoneRef.current, { opacity: 0, y: 80, scale: 0.92, rotateX: 8 });
-        gsap.set(pillsRef.current?.children ?? [], { opacity: 0, scale: 0.75, y: 12 });
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
         tl.to(eyebrowRef.current, { opacity: 1, y: 0, duration: 0.6, delay: 0.1 })
           .to(line1Ref.current,   { opacity: 1, y: 0, duration: 0.7 }, "-=0.35")
@@ -42,8 +40,7 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
           .to(line3Ref.current,   { opacity: 1, y: 0, duration: 0.7 }, "-=0.55")
           .to(subRef.current,     { opacity: 1, y: 0, duration: 0.6 }, "-=0.4")
           .to(ctaRef.current,     { opacity: 1, y: 0, duration: 0.6 }, "-=0.45")
-          .to(phoneRef.current,   { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.1, ease: "power4.out" }, "-=0.7")
-          .to(pillsRef.current?.children ?? [], { opacity: 1, scale: 1, y: 0, duration: 0.5, stagger: 0.1 }, "-=0.5");
+          .to(phoneRef.current,   { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 1.1, ease: "power4.out" }, "-=0.7");
         cleanup = () => tl.kill();
       } catch { /* GSAP unavailable */ }
     }
@@ -120,7 +117,7 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
         <span className="dv-display" style={{ fontSize: "clamp(5rem, 18vw, 18rem)", color: "rgba(0,0,0,0.06)", lineHeight: 1, userSelect: "none" }}>CARD</span>
       </div>
 
-      <div className="dv-container" style={{ paddingTop: "clamp(5rem, 9vw, 9rem)", paddingBottom: "clamp(4rem, 7vw, 7rem)", position: "relative" }}>
+      <div className="dv-container" style={{ paddingTop: "clamp(2.5rem, 6vw, 8rem)", paddingBottom: "clamp(2.5rem, 5vw, 6rem)", position: "relative" }}>
         <div className="dv-hero-grid">
 
           {/* LEFT */}
@@ -153,7 +150,7 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
               </p>
             </div>
 
-            <div ref={ctaRef} style={{ marginTop: "2.5rem", display: "flex", flexWrap: "wrap", gap: "0.875rem", alignItems: "center" }}>
+            <div ref={ctaRef} style={{ marginTop: "2.5rem", display: "flex", flexWrap: "wrap", gap: "0.875rem", alignItems: "center" }} className="dv-hero-cta">
               <Link href={hero.primaryCta.href} className="dv-btn dv-btn-primary dv-btn-lg">
                 Create Your Card
                 <ArrowRight style={{ width: "1.125rem", height: "1.125rem" }} aria-hidden />
@@ -163,7 +160,7 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
               </Link>
             </div>
 
-            <ul style={{ marginTop: "2rem", listStyle: "none", padding: 0, display: "flex", flexWrap: "wrap", gap: "1.25rem" }}>
+            <ul style={{ marginTop: "2rem", listStyle: "none", padding: 0, display: "flex", flexWrap: "wrap", gap: "1.25rem" }} className="dv-hero-proof">
               {hero.proof.map((item) => (
                 <li key={item} style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.875rem", fontWeight: 600, color: "rgba(0,0,0,0.6)" }}>
                   <span style={{ width: "0.375rem", height: "0.375rem", borderRadius: "50%", background: "var(--dv-black)", flexShrink: 0 }} aria-hidden />
@@ -173,33 +170,11 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
             </ul>
           </div>
 
-          {/* RIGHT */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {/* RIGHT — phone, aligned right with breathing room */}
+          <div style={{ position: "relative", display: "flex", justifyContent: "flex-end", alignItems: "center", paddingRight: "clamp(0rem, 3vw, 3rem)" }}>
             <canvas ref={canvasRef} aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0, width: "100%", height: "100%" }} />
-
-            <div ref={pillsRef} aria-hidden>
-              <div className="dv-float-pill dv-animate-float" style={{ position: "absolute", top: "6%", left: "-8%", zIndex: 10, animationDelay: "0s" }}>
-                <UserCheck style={{ width: "0.875rem", height: "0.875rem" }} />Save Contact
-              </div>
-              <div className="dv-float-pill dv-float-pill-lime dv-animate-float" style={{ position: "absolute", top: "18%", right: "-10%", zIndex: 10, animationDelay: "1.2s" }}>
-                <Zap style={{ width: "0.75rem", height: "0.75rem" }} />LIVE
-              </div>
-              <div className="dv-float-pill dv-animate-float-slow" style={{ position: "absolute", bottom: "28%", left: "-12%", zIndex: 10, animationDelay: "2.1s" }}>
-                <QrCode style={{ width: "0.875rem", height: "0.875rem" }} />QR Ready
-              </div>
-              <div className="dv-float-pill dv-animate-float-slow" style={{ position: "absolute", bottom: "12%", right: "-8%", zIndex: 10, animationDelay: "0.6s" }}>
-                <Share2 style={{ width: "0.875rem", height: "0.875rem" }} />Share
-              </div>
-            </div>
-
-            <div ref={phoneRef} style={{ width: "clamp(240px, 26vw, 310px)", position: "relative", transformStyle: "preserve-3d", transition: "transform 0.15s ease" }}>
-              <div className="dv-phone">
-                <div className="dv-phone-notch"><div className="dv-phone-notch-bar" /></div>
-                <div style={{ height: "clamp(480px, 52vw, 560px)", overflowY: "auto" }} className="dv-scrollbar-none">
-                  <CardPreview themes={themes} qrValue={demoUrl} tone="light" />
-                </div>
-                <div className="dv-phone-home"><div className="dv-phone-home-bar" /></div>
-              </div>
+            <div ref={phoneRef} style={{ width: "clamp(220px, 28vw, 300px)", position: "relative" }}>
+              <CardPreview themes={themes} qrValue={demoUrl} tone="light" />
             </div>
           </div>
         </div>
@@ -209,12 +184,17 @@ export function Hero({ themes }: { themes: ThemeShowcase[] }) {
         .dv-hero-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: clamp(2rem, 5vw, 6rem);
+          gap: clamp(2rem, 5vw, 5rem);
           align-items: center;
         }
         @media (max-width: 900px) {
-          .dv-hero-grid { grid-template-columns: 1fr; }
-          .dv-hero-grid > div:last-child { display: none; }
+          .dv-hero-grid {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            text-align: center;
+          }
+          .dv-hero-cta   { justify-content: center !important; }
+          .dv-hero-proof { justify-content: center !important; }
         }
       `}</style>
     </section>

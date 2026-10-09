@@ -1,230 +1,106 @@
 "use client";
 
-import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Crown } from "lucide-react";
-import { useEffect, useState } from "react";
-
+import { UserCheck } from "lucide-react";
 import { CardView } from "@/components/card/card-view";
-import { QrImage } from "@/components/card/qr";
 import { demoCard } from "@/lib/cards/demo";
 import type { ThemeShowcase } from "@/lib/marketing/themes";
-import { cn } from "@/lib/utils";
-
-/**
- * The live card on the landing hero.
- *
- * It renders the *actual* card renderer against the *actual* theme list, so the
- * preview cannot drift from what a user gets after signing up. The only
- * concessions are in `CardView`'s `preview` mode: no analytics beacon, and no
- * sticky bar (a `position: fixed` element inside a mock-up is meaningless).
- *
- * The themes cycle on their own until the visitor takes over — hover, focus or
- * a click stops the timer. That gives the hero a slow, professional loop rather
- * than a static screenshot, without ever moving unless someone is looking. It
- * also stops permanently for anyone who asked for reduced motion, who gets a
- * single theme and the switcher instead.
- *
- * `tone="dark"` swaps the selector chrome for the dark hero behind it. The QR
- * chip encodes a real destination (`qrValue`) — never a decorative pattern that
- * looks scannable but is not.
- *
- * A horizontal, scroll-snapping theme list keeps the swatches usable on a phone
- * without wrapping into a tall block.
- */
-
-/** How long each theme holds before the auto-advance. Slow enough to read. */
-const ROTATE_MS = 4200;
 
 export function CardPreview({
   themes,
-  qrValue,
-  tone = "light",
 }: {
   themes: ThemeShowcase[];
-  /** Absolute URL the hero QR encodes — usually the sample card. */
   qrValue?: string;
   tone?: "light" | "dark";
 }) {
-  const reduce = useReducedMotion();
-  const [activeSlug, setActiveSlug] = useState<string>(
-    () => themes.find((theme) => theme.slug === "professional")?.slug ?? themes[0]?.slug ?? "",
-  );
-  const [autoRotate, setAutoRotate] = useState(true);
-
-  const dark = tone === "dark";
-
-  // `getShowcaseThemes` always returns at least the seeded list, but a guard here
-  // means a future caller can never crash the landing page's hero.
-  const active = themes.find((theme) => theme.slug === activeSlug);
-
-  useEffect(() => {
-    if (reduce || !autoRotate || themes.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      setActiveSlug((current) => {
-        const index = themes.findIndex((theme) => theme.slug === current);
-        return themes[(index + 1) % themes.length]?.slug ?? current;
-      });
-    }, ROTATE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [reduce, autoRotate, themes]);
+  const active = themes.find((t) => t.slug === "professional") ?? themes[0];
 
   if (!active) return null;
 
-  // The demo fixture is theme-agnostic apart from its theme, so switching only
-  // has to swap that one field.
   const previewCard = { ...demoCard, theme: active.config };
 
   return (
-    <div
-      className="w-full"
-      onPointerEnter={() => setAutoRotate(false)}
-      onFocusCapture={() => setAutoRotate(false)}
-    >
-      {/* Phone frame, floating. The scan-me chip overlaps its lower-left corner. */}
-      <div className="relative mx-auto w-full max-w-[17rem] sm:max-w-[18rem]">
-        <div
-          className="absolute -inset-8 -z-10 rounded-[3rem] bg-brand/20 blur-3xl"
-          aria-hidden
-        />
+    <div className="w-full">
+      {/* ── Outer wrapper: phone centred, tags absolutely positioned ── */}
+      <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
 
-        <motion.div
-          className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
-          animate={reduce ? undefined : { y: [0, -7, 0] }}
-          transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="h-[30rem] overflow-y-auto overscroll-contain bg-bg [scrollbar-width:none] sm:h-[32rem]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active.slug}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              >
+        {/* Lime glow behind phone */}
+        <div aria-hidden style={{
+          position: "absolute",
+          top: "10%", left: "50%",
+          transform: "translateX(-50%)",
+          width: "18rem", height: "24rem",
+          background: "radial-gradient(ellipse, rgba(199,255,47,0.55) 0%, transparent 70%)",
+          filter: "blur(32px)",
+          zIndex: 0,
+          pointerEvents: "none",
+        }} />
+
+        {/* ── iPhone X — clean sharp frame, notch only, full screen content ── */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+
+          {/* Left side buttons */}
+          <div aria-hidden style={{ position: "absolute", left: "-3px", top: "5rem",  width: "3px", height: "1.6rem", background: "linear-gradient(to right,#4a4a4a,#777)", borderRadius: "2px 0 0 2px" }} />
+          <div aria-hidden style={{ position: "absolute", left: "-3px", top: "7.4rem", width: "3px", height: "2.6rem", background: "linear-gradient(to right,#4a4a4a,#777)", borderRadius: "2px 0 0 2px" }} />
+          <div aria-hidden style={{ position: "absolute", left: "-3px", top: "10.6rem",width: "3px", height: "2.6rem", background: "linear-gradient(to right,#4a4a4a,#777)", borderRadius: "2px 0 0 2px" }} />
+          {/* Right power button */}
+          <div aria-hidden style={{ position: "absolute", right: "-3px", top: "8rem",  width: "3px", height: "3.8rem", background: "linear-gradient(to left,#4a4a4a,#777)",  borderRadius: "0 2px 2px 0" }} />
+
+          {/* Body */}
+          <div style={{
+            width: "18rem",
+            borderRadius: "3rem",
+            background: "linear-gradient(160deg,#4a4a4a 0%,#2c2c2c 50%,#1a1a1a 100%)",
+            padding: "9px 8px",
+            boxShadow: [
+              "0 50px 100px rgba(0,0,0,0.55)",
+              "0 20px 40px rgba(0,0,0,0.35)",
+              "0 0 0 1px rgba(255,255,255,0.13)",
+              "0 0 0 2.5px rgba(0,0,0,0.9)",
+              "inset 0 1px 0 rgba(255,255,255,0.08)",
+            ].join(", "),
+          }}>
+
+            {/* Screen */}
+            <div style={{ borderRadius: "2.5rem", overflow: "hidden", position: "relative", background: "#000" }}>
+
+              {/* Notch only — no status bar */}
+              <div style={{
+                position: "absolute", top: 0, left: "50%",
+                transform: "translateX(-50%)",
+                width: "7rem", height: "1.5rem",
+                background: "#1a1a1a",
+                borderRadius: "0 0 1.1rem 1.1rem",
+                zIndex: 20,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem",
+              }} aria-hidden>
+                <div style={{ width: "2rem", height: "0.18rem", background: "#333", borderRadius: "999px" }} />
+                <div style={{ width: "0.4rem", height: "0.4rem", borderRadius: "50%", background: "#222", border: "1px solid #3a3a3a" }} />
+              </div>
+
+              {/* Full screen card — starts from very top, notch overlays */}
+              <div style={{
+                height: "38rem",
+                overflowY: "auto",
+                overscrollBehavior: "contain",
+                scrollbarWidth: "none" as const,
+                background: "#fff",
+              }}>
                 <CardView card={previewCard} preview />
-              </motion.div>
-            </AnimatePresence>
+              </div>
+
+              {/* Home indicator */}
+              <div style={{ height: "1.4rem", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "5.5rem", height: "0.22rem", background: "#000", borderRadius: "999px", opacity: 0.14 }} />
+              </div>
+
+              {/* Glare */}
+              <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 5, borderRadius: "2.5rem", background: "linear-gradient(135deg,rgba(255,255,255,0.07) 0%,transparent 40%)" }} />
+            </div>
           </div>
-        </motion.div>
 
-        {qrValue ? (
-          <motion.div
-            className="absolute -left-6 bottom-10 hidden rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/5 sm:block"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <QrImage
-              value={qrValue}
-              size={72}
-              alt="Scan to open the sample Digital Visiting Card"
-              className="block"
-            />
-            <p className="mt-1.5 text-center text-[10px] font-semibold tracking-wide text-neutral-600 uppercase">
-              Scan to view
-            </p>
-          </motion.div>
-        ) : null}
-      </div>
-
-      {/* Caption + switcher, below the phone rather than above it: on a phone the
-          copy reads first, then the card, then the control. */}
-      <div className="mt-6">
-        <div className="flex items-center gap-2 px-1">
-          <h3 className={cn("text-[15px] font-semibold", dark ? "text-white" : "text-fg")}>
-            {active.name}
-          </h3>
-          {active.isPremium ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-accent/20 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
-              <Crown className="size-3" aria-hidden />
-              Premium
-            </span>
-          ) : (
-            <span
-              className={cn(
-                "rounded-md px-1.5 py-0.5 text-[11px] font-semibold",
-                dark ? "bg-emerald-400/15 text-emerald-300" : "bg-success-soft text-success",
-              )}
-            >
-              Free
-            </span>
-          )}
-          <span className={cn("ml-auto text-[12px]", dark ? "text-white/45" : "text-subtle")}>
-            {active.config.layout} · {active.config.hero}
-          </span>
+          {/* Drop shadow */}
+          <div aria-hidden style={{ position: "absolute", bottom: "-1rem", left: "50%", transform: "translateX(-50%)", width: "70%", height: "1rem", background: "rgba(0,0,0,0.3)", filter: "blur(14px)", borderRadius: "50%" }} />
         </div>
-
-        <p
-          className={cn(
-            "mt-1.5 line-clamp-2 text-[13px] leading-relaxed",
-            dark ? "text-white/60" : "text-muted",
-          )}
-        >
-          {active.description}
-        </p>
-
-        <div
-          role="group"
-          aria-label="Card designs"
-          className="mt-3.5 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {themes.map((theme) => {
-            const selected = theme.slug === active.slug;
-            return (
-              <button
-                key={theme.slug}
-                type="button"
-                aria-pressed={selected}
-                aria-label={`Show the ${theme.name} design`}
-                onClick={() => {
-                  setAutoRotate(false);
-                  setActiveSlug(theme.slug);
-                }}
-                className={cn(
-                  "group relative size-8 shrink-0 snap-start overflow-hidden rounded-lg ring-1 transition-all duration-200",
-                  selected
-                    ? "ring-2 ring-white"
-                    : dark
-                      ? "ring-white/25 hover:ring-white/50"
-                      : "ring-black/10 hover:ring-black/25",
-                )}
-              >
-                <span
-                  className="absolute inset-0"
-                  style={{ backgroundColor: theme.config.palette.bg }}
-                  aria-hidden
-                />
-                <span
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(140deg, ${theme.config.palette.accent} 0%, ${theme.config.palette.accent} 46%, transparent 46%)`,
-                  }}
-                  aria-hidden
-                />
-                <span
-                  className="absolute inset-x-2 bottom-1.5 h-1 rounded-full"
-                  style={{ backgroundColor: theme.config.palette.fg, opacity: 0.5 }}
-                  aria-hidden
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        <Link
-          href="/templates"
-          className={cn(
-            "mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-80",
-            dark ? "text-white" : "text-black",
-          )}
-        >
-          Browse all {themes.length} designs
-          <span aria-hidden>→</span>
-        </Link>
       </div>
     </div>
   );

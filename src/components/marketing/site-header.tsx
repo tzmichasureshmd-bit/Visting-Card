@@ -8,7 +8,7 @@ import { BrandMark } from "@/components/marketing/brand-mark";
 import { nav } from "@/lib/marketing/content";
 
 export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
-  const [open, setOpen]       = useState(false);
+  const [open, setOpen]         = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   void overDark;
@@ -35,7 +35,16 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
   return (
     <header
       ref={headerRef}
-      className={`dv-navbar${scrolled ? " scrolled" : ""}`}
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        background: scrolled ? "rgba(255,255,255,0.97)" : "#fff",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
+        transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+        boxShadow: scrolled ? "0 2px 16px rgba(0,0,0,0.08)" : "none",
+      }}
     >
       <div
         className="dv-container"
@@ -48,6 +57,7 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
           transition: "height 0.3s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
+        {/* Logo */}
         <BrandMark href="/" />
 
         {/* Desktop nav */}
@@ -59,18 +69,19 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
               style={{
                 padding: "0.5rem 0.875rem",
                 fontSize: "0.875rem",
-                fontWeight: 600,
-                color: "var(--dv-gray)",
+                fontWeight: 700,
+                color: "rgba(0,0,0,0.65)",
                 textDecoration: "none",
                 borderRadius: "var(--dv-r-sm)",
                 transition: "color 0.15s, background 0.15s",
+                letterSpacing: "0.01em",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--dv-black)";
-                e.currentTarget.style.background = "var(--dv-off-white)";
+                e.currentTarget.style.color = "#000";
+                e.currentTarget.style.background = "rgba(0,0,0,0.08)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--dv-gray)";
+                e.currentTarget.style.color = "rgba(0,0,0,0.65)";
                 e.currentTarget.style.background = "transparent";
               }}
             >
@@ -80,24 +91,54 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="dv-desktop-ctas" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div className="dv-desktop-ctas" style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
           <Link
             href="/login"
             style={{
               padding: "0.5rem 1rem",
               fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--dv-gray)",
+              fontWeight: 700,
+              color: "rgba(0,0,0,0.6)",
               textDecoration: "none",
               borderRadius: "var(--dv-r-sm)",
-              transition: "color 0.15s",
+              transition: "color 0.15s, background 0.15s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--dv-black)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--dv-gray)")}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#000";
+              e.currentTarget.style.background = "rgba(0,0,0,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "rgba(0,0,0,0.6)";
+              e.currentTarget.style.background = "transparent";
+            }}
           >
             Sign in
           </Link>
-          <Link href="/signup" className="dv-btn dv-btn-primary dv-btn-sm">
+          <Link
+            href="/signup"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.375rem",
+              padding: "0.5625rem 1.125rem",
+              fontSize: "0.875rem",
+              fontWeight: 800,
+              color: "#fff",
+              background: "#000",
+              borderRadius: "var(--dv-r-sm)",
+              textDecoration: "none",
+              letterSpacing: "0.01em",
+              transition: "opacity 0.15s, transform 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = "0.85";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = "1";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
             Create Card →
           </Link>
         </div>
@@ -112,12 +153,13 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
           className="dv-mobile-btn"
           style={{
             display: "none",
-            background: "none",
+            background: "rgba(0,0,0,0.08)",
             border: "none",
             cursor: "pointer",
             padding: "0.5rem",
-            color: "var(--dv-black)",
+            color: "#000",
             borderRadius: "var(--dv-r-sm)",
+            transition: "background 0.15s",
           }}
         >
           {open
@@ -132,8 +174,8 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
         <div
           id="mobile-menu"
           style={{
-            background: "var(--dv-white)",
-            borderTop: "1px solid var(--dv-border)",
+          background: "#fff",
+            borderTop: "1px solid rgba(0,0,0,0.1)",
             padding: "1rem 1.5rem 1.5rem",
           }}
         >
@@ -146,23 +188,42 @@ export function SiteHeader({ overDark = false }: { overDark?: boolean }) {
                 style={{
                   padding: "0.875rem 1rem",
                   fontSize: "1rem",
-                  fontWeight: 600,
-                  color: "var(--dv-black)",
+                  fontWeight: 700,
+                  color: "#000",
                   textDecoration: "none",
                   borderRadius: "var(--dv-r-sm)",
                   transition: "background 0.15s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--dv-off-white)")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.08)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 {item.label}
               </Link>
             ))}
-            <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--dv-border)", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <Link href="/login" onClick={() => setOpen(false)} className="dv-btn dv-btn-outline" style={{ justifyContent: "center" }}>
+            <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                style={{
+                  display: "flex", justifyContent: "center",
+                  padding: "0.875rem", fontSize: "0.9375rem", fontWeight: 700,
+                  color: "#000", textDecoration: "none",
+                  border: "2px solid rgba(0,0,0,0.2)", borderRadius: "var(--dv-r-sm)",
+                  transition: "border-color 0.15s",
+                }}
+              >
                 Sign in
               </Link>
-              <Link href="/signup" onClick={() => setOpen(false)} className="dv-btn dv-btn-primary" style={{ justifyContent: "center" }}>
+              <Link
+                href="/signup"
+                onClick={() => setOpen(false)}
+                style={{
+                  display: "flex", justifyContent: "center",
+                  padding: "0.875rem", fontSize: "0.9375rem", fontWeight: 800,
+                  color: "#fff", background: "#000", textDecoration: "none",
+                  borderRadius: "var(--dv-r-sm)",
+                }}
+              >
                 Create Your Card →
               </Link>
             </div>
