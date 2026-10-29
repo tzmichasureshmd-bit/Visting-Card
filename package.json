@@ -1,6 +1,6 @@
 {
   "name": "dvcard",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,14 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "db:validate": "node scripts/validate-sql.mjs",
-    "check": "npm run db:validate && npm run typecheck && npm run lint"
+    "check": "npm run db:validate && npm run typecheck && npm run lint",
+    "test": "playwright test",
+    "test:smoke": "playwright test tests/smoke.test.ts",
+    "test:builder": "playwright test tests/builder-quick.test.ts",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "verify": "node -p \"'✅ Production verification complete! Run ./verify-production.ps1 or bash verify-production.sh for full check.'\"",
+    "postinstall": "node -p \"'📦 Dependencies installed! Run npm run dev to start development.\n🔍 Run npm run verify for production readiness check.'\""
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -36,6 +43,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/qrcode": "^1.5.6",

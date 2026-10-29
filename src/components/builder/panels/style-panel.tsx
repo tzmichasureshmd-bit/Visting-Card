@@ -154,6 +154,8 @@ export function BuilderStylePanel({
   // While a save is in flight show the pending slug; otherwise show the last saved.
   const selected = pendingSlug ?? savedSlug;
   const [failure, setFailure] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   async function choose(slug: string, config: ReturnType<typeof resolveTheme>) {
     if (pendingSlug) return;
@@ -172,6 +174,9 @@ export function BuilderStylePanel({
       setSavedSlug(slug);
       // Drop the optimistic draft — the saved config is now authoritative.
       setDraft((current) => ({ ...current, theme: undefined }));
+      // Show success feedback briefly
+      setSuccess(slug);
+      setTimeout(() => setSuccess(null), 2000);
     } else {
       setFailure(result.error);
       // Revert preview to what was actually saved.
@@ -179,14 +184,39 @@ export function BuilderStylePanel({
     }
   }
 
+  // Get unique categories
+  const categories: string[] = ["all", ...new Set(state.themes.map(t => (t.config as any).category ?? "general"))].filter(Boolean) as string[];
+  const filteredThemes = categoryFilter === "all" 
+    ? state.themes 
+    : state.themes.filter(t => ((t.config as any).category ?? "general") === categoryFilter);
+
   return (
     <div className="space-y-5">
       <Panel
         title="Design"
         description="Each design changes the page structure — layout, hero and typography."
       >
+        {/* Category Filter */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setCategoryFilter(cat)}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                categoryFilter === cat
+                  ? "bg-fg text-bg"
+                  : "bg-surface-2 text-muted hover:bg-surface-3 hover:text-fg"
+              )}
+            >
+              {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </button>
+          ))}
+        </div>
+
         <ul className="grid gap-3 sm:grid-cols-2">
-          {state.themes.map((theme) => {
+          {filteredThemes.map((theme) => {
             const isSelected = theme.slug === selected;
             const config = resolveTheme(theme.config, null);
             const locked = theme.isPremium && !premiumAllowed;
@@ -225,6 +255,9 @@ export function BuilderStylePanel({
                       ) : null}
                       {pendingSlug === theme.slug ? (
                         <Loader2 className="size-3 shrink-0 animate-spin text-muted" aria-hidden />
+                      ) : null}
+                      {success === theme.slug ? (
+                        <span className="text-[11px] font-medium text-success animate-in fade-in-0">✓ Saved</span>
                       ) : null}
                     </span>
                     <span className="text-[11px] capitalize text-muted">

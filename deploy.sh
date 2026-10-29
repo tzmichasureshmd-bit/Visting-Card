@@ -12,11 +12,17 @@ echo "==> Pulling latest code..."
 cd "$APP_DIR"
 git pull origin master
 
-echo "==> Installing dependencies..."
+echo "==> Installing frontend dependencies..."
 npm install --omit=dev
 
-echo "==> Building app..."
+echo "==> Building frontend..."
 npm run build
+
+echo "==> Installing backend dependencies..."
+cd backend
+npm install --omit=dev
+npm run build
+cd ..
 
 echo "==> Restarting PM2..."
 pm2 reload ecosystem.config.js --update-env || pm2 start ecosystem.config.js
