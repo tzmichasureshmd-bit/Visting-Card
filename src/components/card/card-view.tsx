@@ -1336,7 +1336,7 @@ function UpiBlock({
     <div className="space-y-3">
       <p className="text-sm text-[var(--c-muted)]">
         Scan the QR or tap to pay {card.payment?.payeeName ?? card.fullName} directly.
-        Payments go straight to the account holder — Tzmicha It Solutions takes no cut.
+        Payments go straight to the account holder — no platform fees.
       </p>
       <div className="flex flex-wrap items-center gap-4">
         <div className="shrink-0 rounded-xl bg-white p-2 shadow-sm ring-1 ring-[var(--c-border)]">
@@ -1499,7 +1499,7 @@ function CardFooter({ card, demo }: { card: CardData; demo: boolean }) {
             href="/"
             className="font-semibold text-[var(--c-accent)] underline underline-offset-2"
           >
-            Tzmicha It Solutions
+            DV CARD
           </Link>
         </p>
       ) : null}

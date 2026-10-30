@@ -10,116 +10,193 @@ export function SiteFooter() {
 
   return (
     <footer style={{ background: "var(--dv-white)" }}>
-
-      {/* Digital Banner — full bleed, TOP */}
-      <div style={{ lineHeight: 0, margin: 0, padding: 0 }}>
-        <img
-          src="/images/dvcard/Digital Banner .png"
-          alt="DV Card — Digital Visiting Card Platform"
-          style={{ width: "100%", height: "auto", display: "block" }}
+      {/* Hero CTA Section */}
+      <div 
+        style={{ 
+          background: "linear-gradient(135deg, #84cc16 0%, #65a30d 100%)",
+          padding: "clamp(4rem, 10vw, 8rem) 0",
+          position: "relative",
+          overflow: "hidden"
+        }}
+      >
+        {/* Decorative pattern overlay */}
+        <div 
+          aria-hidden 
+          style={{ 
+            position: "absolute", 
+            inset: 0, 
+            backgroundImage: "radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+            pointerEvents: "none" 
+          }} 
         />
-      </div>
-
-      {/* Large lime CTA band — below banner */}
-      <div style={{ background: "var(--dv-lime)", padding: "clamp(3rem, 6vw, 5rem) 0", overflow: "hidden", position: "relative", marginBottom: 0 }}>
-        {/* Grid overlay */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)", backgroundSize: "80px 80px", pointerEvents: "none" }} />
-        <div className="dv-container" style={{ position: "relative" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "2rem" }}>
-            <div>
-              <p className="dv-eyebrow" style={{ marginBottom: "0.75rem" }}>Start for free</p>
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "clamp(1.75rem, 4vw, 3rem)",
-                  fontWeight: 800,
-                  letterSpacing: "-0.04em",
-                  textTransform: "uppercase",
-                  color: "var(--dv-black)",
-                  lineHeight: 1,
-                }}
-              >
-                CREATE YOUR<br />DIGITAL CARD TODAY.
-              </h2>
-            </div>
-            <Link href="/signup" className="dv-btn dv-btn-primary dv-btn-lg" style={{ flexShrink: 0 }}>
+        
+        <div className="dv-container" style={{ position: "relative", textAlign: "center" }}>
+          <h2
+            style={{
+              margin: "0 0 1rem 0",
+              fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+              fontWeight: 900,
+              letterSpacing: "-0.02em",
+              color: "white",
+              lineHeight: 1.1,
+              textTransform: "uppercase",
+            }}
+          >
+            Let&apos;s get you<br />connected
+          </h2>
+          <p style={{ 
+            fontSize: "clamp(1rem, 2vw, 1.25rem)", 
+            color: "rgba(255,255,255,0.95)", 
+            marginBottom: "2.5rem",
+            maxWidth: "600px",
+            margin: "0 auto 2.5rem auto",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            fontWeight: 600
+          }}>
+            Create your card. Share everywhere. Get contacted instantly.
+          </p>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link 
+              href="/signup" 
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "1rem 2.5rem",
+                background: "white",
+                color: "#65a30d",
+                fontSize: "1rem",
+                fontWeight: 700,
+                textDecoration: "none",
+                borderRadius: "50px",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}
+              className="footer-cta-btn"
+            >
               Create Your Card
-              <ArrowRight style={{ width: "1.125rem", height: "1.125rem" }} aria-hidden />
+            </Link>
+            <Link 
+              href="/templates" 
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "1rem 2.5rem",
+                background: "transparent",
+                color: "white",
+                fontSize: "1rem",
+                fontWeight: 700,
+                textDecoration: "none",
+                border: "2px solid white",
+                borderRadius: "50px",
+                transition: "all 0.2s",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}
+              className="footer-cta-btn-outline"
+            >
+              View Designs
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Main footer body */}
-      <div className="dv-container" style={{ paddingTop: "3.5rem", paddingBottom: "2rem" }}>
-        <div className="dv-footer-grid" style={{ marginBottom: "3rem" }}>
-          {/* Brand column */}
-          <div>
-            <BrandMark tone="light" href={site.url} />
-            <p style={{ marginTop: "1rem", fontSize: "0.9375rem", color: "var(--dv-gray)", lineHeight: 1.65, maxWidth: "28ch" }}>
-              {site.tagline}
-            </p>
-            <div style={{ marginTop: "1.25rem", display: "flex", flexDirection: "column", gap: "0.625rem" }}>
-              <p style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", color: "var(--dv-gray)", margin: 0 }}>
-                <Mail style={{ width: "0.875rem", height: "0.875rem", flexShrink: 0 }} aria-hidden />
-                <a
-                  href={`mailto:${publicConfig.supportEmail}`}
-                  className="dv-footer-link"
-                >
-                  {publicConfig.supportEmail}
-                </a>
+      {/* Minimal Footer Info */}
+      <div style={{ 
+        background: "#fafafa", 
+        borderTop: "1px solid #e5e5e5",
+        padding: "3rem 0"
+      }}>
+        <div className="dv-container">
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
+            gap: "3rem",
+            alignItems: "center",
+            textAlign: "center"
+          }}>
+            {/* Contact Info */}
+            <div>
+              <p style={{ 
+                margin: 0, 
+                fontSize: "0.875rem", 
+                color: "#666",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                marginBottom: "0.5rem"
+              }}>
+                Support
               </p>
-              <p style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", color: "var(--dv-gray)", margin: 0 }}>
-                <MessageCircle style={{ width: "0.875rem", height: "0.875rem", flexShrink: 0 }} aria-hidden />
-                <Link href="/legal/contact" className="dv-footer-link">
-                  Contact support
-                </Link>
+              <a
+                href={`mailto:${publicConfig.supportEmail}`}
+                style={{
+                  fontSize: "1.125rem",
+                  fontWeight: 700,
+                  color: "#000",
+                  textDecoration: "none",
+                  transition: "color 0.2s"
+                }}
+                className="footer-email"
+              >
+                {publicConfig.supportEmail}
+              </a>
+            </div>
+
+            {/* Logo */}
+            <div>
+              <BrandMark tone="light" href={site.url} />
+              <p style={{ 
+                margin: "0.75rem 0 0 0", 
+                fontSize: "0.875rem", 
+                color: "#666"
+              }}>
+                Professional Digital Cards
+              </p>
+            </div>
+
+            {/* Website Credit */}
+            <div>
+              <p style={{ 
+                margin: 0, 
+                fontSize: "0.75rem", 
+                color: "#999",
+                textTransform: "uppercase",
+                letterSpacing: "0.1em"
+              }}>
+                &copy; {year} {site.name}
+              </p>
+              <p style={{ 
+                margin: "0.5rem 0 0 0", 
+                fontSize: "0.75rem", 
+                color: "#999"
+              }}>
+                <Link href="/legal/privacy" style={{ color: "#999", textDecoration: "none" }}>Privacy</Link>
+                {" · "}
+                <Link href="/legal/terms" style={{ color: "#999", textDecoration: "none" }}>Terms</Link>
+                {" · "}
+                <Link href="/legal/contact" style={{ color: "#999", textDecoration: "none" }}>Contact</Link>
               </p>
             </div>
           </div>
-
-          {/* Nav columns */}
-          {footer.columns.map((column) => (
-            <nav key={column.title} aria-label={column.title}>
-              <h2 className="dv-eyebrow" style={{ marginBottom: "1rem" }}>{column.title}</h2>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
-                {column.links.map((link) => (
-                  <li key={`${link.href}-${link.label}`}>
-                    <Link href={link.href} className="dv-footer-nav-link">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-
-        {/* Bottom bar */}
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "0.5rem", borderTop: "1px solid var(--dv-border)", paddingTop: "1.25rem" }}>
-          <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--dv-gray-light)" }}>
-            &copy; {year} {site.name}. {footer.note}
-          </p>
-          <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--dv-gray-light)" }}>
-            <a href={publicConfig.appUrl} style={{ color: "var(--dv-gray)", textDecoration: "none" }} rel="nofollow">
-              {publicConfig.appUrl.replace(/^https?:\/\//, "")}
-            </a>
-          </p>
         </div>
       </div>
 
       <style>{`
-        .dv-footer-grid {
-          display: grid;
-          grid-template-columns: 1.8fr repeat(3, 1fr);
-          gap: 2.5rem;
+        .footer-cta-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
-        @media(max-width:1024px){ .dv-footer-grid { grid-template-columns: 1fr 1fr !important; } }
-        @media(max-width:640px){  .dv-footer-grid { grid-template-columns: 1fr !important; } }
-        .dv-footer-link { color: var(--dv-black); text-decoration: none; transition: opacity 0.15s; }
-        .dv-footer-link:hover { opacity: 0.65; }
-        .dv-footer-nav-link { font-size: 0.9375rem; color: var(--dv-gray); text-decoration: none; transition: color 0.15s; }
-        .dv-footer-nav-link:hover { color: var(--dv-black); }
+        .footer-cta-btn-outline:hover {
+          background: white;
+          color: #65a30d;
+        }
+        .footer-email:hover {
+          color: #84cc16;
+        }
       `}</style>
     </footer>
   );

@@ -20,10 +20,9 @@ export const publicConfig = {
    * contact page, the legal pages, the publish panel and the footer.
    *
    * One value, read from the environment, so a real address is configured rather
-   * than hardcoded in six pages. The default matches the company the product is
-   * sold as; override it with `NEXT_PUBLIC_SUPPORT_EMAIL` to point somewhere else.
+   * than hardcoded in six pages.
    */
-  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@tzmicha.com",
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@dvcard.com",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
 };

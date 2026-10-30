@@ -68,7 +68,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "12mb",
     },
     // Razorpay's SDK is Node-only; keep it out of the server bundle.
-    optimizePackageImports: ["lucide-react", "date-fns"],
+    optimizePackageImports: ["lucide-react", "date-fns", "motion", "three"],
   },
 
   // `razorpay` is not in Next's default serverExternalPackages list.

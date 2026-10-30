@@ -9,9 +9,12 @@ import {
   HowSection,
   OnCardSection,
   PricingSection,
-  ProblemSection,
-  StorySection,
 } from "@/components/marketing/sections";
+import { 
+  StorySection as StoryRedesign,
+  ProblemSection as ProblemRedesign,
+  CtaBanner
+} from "@/components/marketing/sections-redesign";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { getPricingTiers } from "@/lib/marketing/pricing";
@@ -28,8 +31,9 @@ export default async function Home() {
       <main id="content">
         <Hero themes={themes} />
         <AudienceStrip />
-        <StorySection />
-        <ProblemSection />
+        <StoryRedesign />
+        <ProblemRedesign />
+        <CtaBanner />
         <BigStatement />
         <HowSection />
         <OnCardSection />

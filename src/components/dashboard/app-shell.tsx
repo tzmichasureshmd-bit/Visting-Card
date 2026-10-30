@@ -31,7 +31,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "My Cards",
     items: [
       { href: "/dashboard/cards",       label: "All Cards",  icon: CreditCard },
-      { href: "/templates",             label: "Templates",  icon: LayoutTemplate },
+      { href: "/dashboard/templates",   label: "Templates",  icon: LayoutTemplate },
     ],
   },
   {

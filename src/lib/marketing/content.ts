@@ -9,12 +9,11 @@
  * implemented, and anything gated by a plan says so. No invented statistics,
  * no invented testimonials: the page sells with the product itself.
  *
- * Terminology is fixed: the product is a "Digital Visiting Card", the company is
- * "Tzmicha It Solutions". Neither is abbreviated anywhere in the product.
+ * Terminology is fixed: the product is a "Digital Visiting Card".
  */
 
 export const site = {
-  name: "Tzmicha It Solutions",
+  name: "DV CARD",
   tagline:
     "Create a Digital Visiting Card that represents you and your business. Share it anywhere. Get contacted instantly.",
   url: "/",
@@ -29,7 +28,7 @@ export const nav = [
 ] as const;
 
 export const hero = {
-  eyebrow: "Digital Visiting Card by Tzmicha It Solutions",
+  eyebrow: "Professional Digital Visiting Card Platform",
   headline: "Create a Digital Visiting Card",
   headlineAccent: "that represents you.",
   subheadline:
@@ -289,7 +288,7 @@ export const footer = {
     {
       title: "Company",
       links: [
-        { label: "About Tzmicha", href: "#story" },
+        { label: "About Us", href: "#story" },
         { label: "Referral programme", href: "/referral" },
         { label: "Become a reseller", href: "/reseller" },
         { label: "Contact us", href: "/legal/contact" },
