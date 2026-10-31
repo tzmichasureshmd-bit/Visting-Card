@@ -311,9 +311,10 @@ export function CardBuilder({
         .bldr-preview { flex: 0 0 400px; width: 400px; border-left: 1px solid var(--dv-border); padding: 1.25rem; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; background: var(--dv-off-white); }
         .bldr-preview-inner { display: flex; flex-direction: column; height: 100%; min-height: 0; }
         @media (max-width: 1023px) {
-          .bldr-root { height: auto; min-height: 100dvh; overflow: visible; }
+          .bldr-root { height: auto; min-height: auto; overflow: visible; }
+          .bldr-shell { height: auto; }
           .bldr-dash-sidebar { display: none; }
-          .bldr-area { height: auto; overflow: visible; }
+          .bldr-area { height: auto; overflow: visible; min-height: auto; }
           .bldr-view-toggle { display: flex; flex-shrink: 0; background: var(--dv-white); border-bottom: 1px solid var(--dv-border); }
           .bldr-view-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem; font-size: 0.8125rem; font-weight: 600; border: none; cursor: pointer; border-bottom: 2px solid transparent; background: transparent; color: var(--dv-gray); transition: color 0.15s, border-color 0.15s; }
           .bldr-view-active { border-bottom-color: var(--dv-black); color: var(--dv-black); }
